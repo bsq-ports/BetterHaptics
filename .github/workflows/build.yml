@@ -4,10 +4,12 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "v*.*.*-bs-*.*.*"
+      - 'v*.*.*-bs-*.*.*'
     branches:
       - 'master'
       - 'main'
+      - '*.*.*'
+      - 'dev'
       - 'dev/*'
       - 'feat/*'
       - 'fix/*'
@@ -29,6 +31,8 @@ on:
     branches:
         - 'master'
         - 'main'
+        - '*.*.*'
+        - 'dev'
         - 'dev/*'
         - 'feat/*'
         - 'fix/*'

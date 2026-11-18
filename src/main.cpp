@@ -105,7 +105,8 @@ MAKE_HOOK_MATCH(
         #define PREVIEW_HAPTIC_PRESET(name)                                                             \
         if (newEnterTarget->transform->parent &&                                                        \
             newEnterTarget->transform->parent->parent &&                                                \
-            newEnterTarget->transform->parent->parent->gameObject == UIHapticSliders::name##Slider) {   \
+            newEnterTarget->transform->parent->parent->gameObject == UIHapticSliders::name##Slider      \
+        ) {                                                                                             \
             self->_rumblePreset->_strength = getBetterHapticsConfig().name##Strength.GetValue();        \
             self->_rumblePreset->_duration = DURATION(name);                                            \
             return VRInputModule_HandlePointerExitAndEnter(self, pointerEventData, newEnterTarget);     \
