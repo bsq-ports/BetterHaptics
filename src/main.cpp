@@ -94,16 +94,18 @@ MAKE_HOOK_MATCH(
     &VRUIControls::VRInputModule::HandlePointerExitAndEnter, void,
     VRUIControls::VRInputModule* self, UnityEngine::EventSystems::PointerEventData* pointerEventData, UnityEngine::GameObject* newEnterTarget
 ) {
-    if (!getBetterHapticsConfig().enabled.GetValue())
+    if (!getBetterHapticsConfig().enabled.GetValue() || !self->_rumblePreset)
         return VRInputModule_HandlePointerExitAndEnter(self, pointerEventData, newEnterTarget);
 
     if (newEnterTarget && newEnterTarget->name == "BSMLSlider") {
         #define DURATION(name) getBetterHapticsConfig().name##Duration.GetValue()
-        #define PREVIEW_HAPTIC_PRESET(name) \
-        if (newEnterTarget->transform->parent->parent->gameObject == UIHapticSliders::name##Slider) { \
-            self->_rumblePreset->_strength = getBetterHapticsConfig().name##Strength.GetValue(); \
-            self->_rumblePreset->_duration = DURATION(name); \
-            return VRInputModule_HandlePointerExitAndEnter(self, pointerEventData, newEnterTarget); \
+        #define PREVIEW_HAPTIC_PRESET(name)                                                             \
+        if (newEnterTarget->transform->parent &&                                                        \
+            newEnterTarget->transform->parent->parent &&                                                \
+            newEnterTarget->transform->parent->parent->gameObject == UIHapticSliders::name##Slider) {   \
+            self->_rumblePreset->_strength = getBetterHapticsConfig().name##Strength.GetValue();        \
+            self->_rumblePreset->_duration = DURATION(name);                                            \
+            return VRInputModule_HandlePointerExitAndEnter(self, pointerEventData, newEnterTarget);     \
         }
 
         PREVIEW_HAPTIC_PRESET(note)
@@ -134,7 +136,7 @@ MAKE_HOOK_MATCH(
     &GlobalNamespace::NoteCutHapticEffect::HitNote, void,
     GlobalNamespace::NoteCutHapticEffect* self, GlobalNamespace::SaberType saberType, GlobalNamespace::NoteCutHapticEffect::Type type
 ) {
-    if (!getBetterHapticsConfig().enabled.GetValue())
+    if (!getBetterHapticsConfig().enabled.GetValue() || !self->_normalPreset)
         return NoteCutHapticEffect_HitNote(self, saberType, type);
 
     if (self->_arcHeadPreset == self->_normalPreset)
@@ -170,7 +172,7 @@ MAKE_HOOK_MATCH(
     &GlobalNamespace::SliderHapticFeedbackInteractionEffect::Vibrate, void,
     GlobalNamespace::SliderHapticFeedbackInteractionEffect* self
 ) {
-    if (!getBetterHapticsConfig().enabled.GetValue())
+    if (!getBetterHapticsConfig().enabled.GetValue() || !self->_hapticPreset)
         return SliderHapticFeedbackInteractionEffect_Vibrate(self);
 
     self->_hapticPreset->_strength = getBetterHapticsConfig().arcStrength.GetValue();
@@ -183,7 +185,7 @@ MAKE_HOOK_MATCH(
     &GlobalNamespace::ObstacleSaberSparkleEffectManager::Update, void,
     GlobalNamespace::ObstacleSaberSparkleEffectManager* self
 ) {
-    if (!getBetterHapticsConfig().enabled.GetValue())
+    if (!getBetterHapticsConfig().enabled.GetValue() || !self->_rumblePreset)
         return ObstacleSaberSparkleEffectManager_Update(self);
 
     self->_rumblePreset->_strength = getBetterHapticsConfig().wallStrength.GetValue();
@@ -196,7 +198,7 @@ MAKE_HOOK_MATCH(
     &GlobalNamespace::SaberClashEffect::LateUpdate, void,
     GlobalNamespace::SaberClashEffect* self
 ) {
-    if (!getBetterHapticsConfig().enabled.GetValue())
+    if (!getBetterHapticsConfig().enabled.GetValue() || !self->_rumblePreset)
         return SaberClashEffect_LateUpdate(self);
 
     self->_rumblePreset->_strength = getBetterHapticsConfig().saberClashStrength.GetValue();
